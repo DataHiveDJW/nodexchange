@@ -1,7 +1,7 @@
 # Installation
 
 ```
-$ npm install nodelb
+$ npm install nodexchange
 ```
 
 # Features
@@ -33,7 +33,7 @@ $ npm install nodelb
 Include our library in your application using:
 
 ```javascript
-const lb = require(‘nodelb’);
+const lb = require(‘nodexchange’);
 ```
 
 ## Options  —
@@ -81,13 +81,13 @@ lb.deploy has three specific strings that can be used in this library.
 
 To see the other use cases and strings for lb.deploy in this library, click these links:
 
-* [Websocket Deploy Section](https://github.com/DataHiveDJW/nodeLB/blob/master/README.md#websockets-setup)
+* [Websocket Deploy Section](https://github.com/DataHiveDJW/nodexchange/blob/master/README.md#websockets-setup)
 
-* [Error Log Deploy Section](https://github.com/DataHiveDJW/nodeLB/blob/master/README.md#error-log-setup)
+* [Error Log Deploy Section](https://github.com/DataHiveDJW/nodexchange/blob/master/README.md#error-log-setup)
 
-* [Redis Deploy Section](https://github.com/DataHiveDJW/nodeLB/blob/master/README.md#redis-sessions-setup)
+* [Redis Deploy Section](https://github.com/DataHiveDJW/nodexchange/blob/master/README.md#redis-sessions-setup)
 
-* [Multi-Threading Deploy Section](https://github.com/DataHiveDJW/nodeLB/blob/master/README.md#threads-setup)
+* [Multi-Threading Deploy Section](https://github.com/DataHiveDJW/nodexchange/blob/master/README.md#threads-setup)
 
 ## rp.addOptions ( options ) —
 
@@ -283,19 +283,19 @@ res.on('end', () => {
 ```
 
 # Redis Sessions Setup
-NodeLB comes packaged with a lightweight controller to store and read session data from a Redis server, providing a central session data store between multiple target servers.
+Nodexchange comes packaged with a lightweight controller to store and read session data from a Redis server, providing a central session data store between multiple target servers.
 
 A Redis server must be setup as a prerequisite to utilizing the Redis Sessions object on the target server.
 [see Redis documentation for more information on setting up your personal Redis instance](https://redis.io/documentation)
 The deploy method requires the Redis server address in the options argument (host/ip and port) and creates/returns the ‘rs’ (Redis sessions) object.
 
 ```javascript
+const lb = require(‘nodexchange’);
 const options = {
   host: '127.0.0.1', // —> string hostname or IP address
   port: 6379,        // —> integer port number
 };
 
-const lb = require(‘nodelb’);
 const rs = lb.deploy(‘redis’, options);
 ```
 
@@ -351,7 +351,7 @@ The server parameter expects the object returned from the http/https createServe
 A simple set up to getting threads started:
 
 ```javascript
-const lb = require('nodelb');
+const lb = require('nodexchange');
 const threads = lb.deploy(‘threads’);
 
 const port = 3000;
