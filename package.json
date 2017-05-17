@@ -1,6 +1,6 @@
 {
   "name": "nodexchange",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "node library for scaling and load balancing servers",
   "main": "nodelb.js",
   "scripts": {
