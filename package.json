@@ -29,6 +29,7 @@
   "homepage": "https://github.com/DataHiveDJW/nodexchange#readme",
   "dependencies": {
     "crypto": "0.0.3",
-    "redis": "^2.7.1"
+    "redis": "^2.7.1",
+    "ws": "^2.3.1"
   }
 }
