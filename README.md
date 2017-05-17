@@ -77,9 +77,9 @@ lb.deploy triggers the creation of the reverse proxy object.
 const rp = lb.deploy(‘rp’, options);
 ```
 
-lb.deploy has three specific strings that can be used in this library.
+lb.deploy has five specific strings that can be used in this library.
 
-To see the other use cases and strings for lb.deploy in this library, click these links:
+*****To see the other use cases and strings for lb.deploy in this library, click these links:*****
 
 * [Websocket Deploy Section](https://github.com/DataHiveDJW/nodexchange/blob/master/README.md#websockets-setup)
 
