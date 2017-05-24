@@ -22,14 +22,26 @@ errorLog.init = (path) => {
  * @public
  */
 
+const queue = [];
+
 errorLog.write = (error) => {
-  if (errorLog.path) {
+  queue.push(error);
+}
+
+// let logStream = fs.createWriteStream(errorLog.path, {flags:'a'});
+
+// const errorStream = (stream) => {
+//   logStream.write(stream);
+// }
+
+errorLog.readWrite = () => {
+  if (errorLog.path && queue.length > 0) {
+    let error = queue.shift();
     fs.readFile(errorLog.path, (err, data) => {
       if (err) console.log(err, 'Read File error');
       let date = new Date();
       fs.writeFile(errorLog.path, data ? data + date + ': ' + error + '\n' : date + ': ' + error + '\n', 'utf-8', (err) => {
         if (err) console.log(err, 'Write File error');
-        // else console.log('File written successfully');
       })
     })
   } else {
@@ -37,4 +49,7 @@ errorLog.write = (error) => {
   }
 }
 
-module.exports = () => errorLog;
+module.exports = (firstTime = true) => {
+  if (firstTime) setInterval(() => errorLog.readWrite(), 2000);
+  return errorLog;
+}

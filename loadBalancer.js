@@ -4,7 +4,7 @@ const EventEmitter = require('events');
 const el = require('./errorLog');
 const throttleIP = require('./throttleIP');
 
-const errorLog = el();
+const errorLog = el(false);
 
 class LoadBalancer extends EventEmitter {
   constructor() {
@@ -13,6 +13,7 @@ class LoadBalancer extends EventEmitter {
     this.cache = {};
     this.options = [];
     this.routes = {};
+    this.getCache = this.getCache.bind(this);
     this.addOptions = this.addOptions.bind(this);
     this.setRoutes = this.setRoutes.bind(this);
     this.healthCheck = this.healthCheck.bind(this);
@@ -43,10 +44,19 @@ class LoadBalancer extends EventEmitter {
   }
 
   /**
+   * Retrieves current cache from library and returns out to user
+   * @public
+   */
+
+  getCache() {
+    return this.cache;
+  }
+
+  /**
    * Stores desired application routes for reverse-proxy to cache responses for
    * @param {Array} -- Nested Array of Request Type & Route
    * @public
-   * Example: 
+   * Example:
    * `rp.setRoutes([['GET', '/'], ['GET', '/html']]);`
    */
 
@@ -79,9 +89,12 @@ class LoadBalancer extends EventEmitter {
     if (options === null || options === undefined) throw 'Error: Options is a required parameter for addOptions';
 
     for (let i = 1; i < options.length; i += 1) {
+      options[i].openSockets = 0;
+      options[i].openRequests = 0;
+      options[i].active = true;
       this.options.push(options[i]);
     }
-  };
+  }
 
   /**
    * Pings all target servers on an interval (if provided) or when method is called
@@ -104,7 +117,6 @@ class LoadBalancer extends EventEmitter {
     for (let i = 0; i < options.length; i += 1) {
       protocol.get(options[i], (res) => {
         if (res.statusCode > 100 && res.statusCode < 400) {
-          console.log(res.statusCode);
           if (options[i].active === false) options[i].active = true;
         } else {
           options[i].active = false;
@@ -134,16 +146,17 @@ class LoadBalancer extends EventEmitter {
    * @public
    */
 
-  clearCache(interval = null) {
-    this.cache = {};
+  clearCache(interval = null, cb = null) {
     if (interval !== null) {
       setTimeout(() => {
-        this.clearCache(this.cache, interval);
+        this.clearCache(interval, cb);
       }, interval);
     }
+    this.cache = {};
+    if (cb) return cb();
   }
 
-  /** 
+  /**
    * Checks if request is considered 'static' - HTML, CSS, JS file
    * Method is not available to users
    * @param {Object} -- Browser request object
@@ -232,14 +245,13 @@ class LoadBalancer extends EventEmitter {
    */
 
   init(bReq, bRes, ssl = false, delay = 0, requests = 0) {
-    if (delay > 0 || requests > 0) throttleIP(bReq, bRes, delay, requests);
     if (!bReq) throw 'Error: The browser request was not provided to init';
     if (!bRes) throw 'Error: The browser response was not provided to init';
+    if ((delay > 0 && requests <= 0) || (delay <= 0 && requests > 0)) {
+      throw 'Error: both delay and requests need to be defined to throttle ip addresses';
+    }
     if (delay > 0 && requests > 0 && throttleIP(bReq, bRes, delay, requests) !== undefined) {
       return throttleIP(bReq, bRes, delay, requests)
-    }
-    if ((delay > 0 && requests <= 0) || (delay <= 0 && requests > 0)) {
-      throw 'Error: both delay and requests need to be defined if you want to throtte ip addresses';
     }
     const options = this.options;
     const cache = this.cache;
